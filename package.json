@@ -1,5 +1,4 @@
 {
-  "name": "vite-trello-web-base-project",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -19,7 +18,8 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
