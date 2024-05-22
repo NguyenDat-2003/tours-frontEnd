@@ -6,6 +6,6 @@ export default defineConfig({
   // --- Cho phép Vite sử dụng dc process.env, mặc định chỉ dùng được import.meta.env
   plugins: [react()],
   resolve: {
-    alias: [{ find: '~', replacement: './src' }]
+    alias: [{ find: '~', replacement: '/src' }]
   }
 })
