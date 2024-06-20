@@ -1,8 +1,9 @@
-import Header from '~/components/Header/Header'
+import AppRoute from '~/routes/AppRoutes'
+
 function App() {
   return (
     <>
-      <Header />
+      <AppRoute />
     </>
   )
 }
