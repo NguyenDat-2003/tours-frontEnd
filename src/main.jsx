@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 import CssBaseline from '@mui/material/CssBaseline'
 import { BrowserRouter as Router } from 'react-router-dom'
 

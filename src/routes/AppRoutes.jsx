@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import DefaultLayout from '~/layout/DefaultLayout'
 import LogIn from '~/pages/Auth/LogIn'
+import Register from '~/pages/Auth/Register'
 import Blogs from '~/pages/Blogs'
 import Tours from '~/pages/Tours'
 import Users from '~/pages/Users'
@@ -46,6 +47,14 @@ function AppRoute() {
           element={
             <DefaultLayout>
               <LogIn />
+            </DefaultLayout>
+          }
+        ></Route>
+        <Route
+          path='/register'
+          element={
+            <DefaultLayout>
+              <Register />
             </DefaultLayout>
           }
         ></Route>
