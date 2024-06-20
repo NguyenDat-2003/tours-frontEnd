@@ -54,7 +54,9 @@ function Header() {
                 Contact Us
               </Button>
               <Button variant='contained' disableElevation>
-                Log In
+                <NavLink style={{ color: '#101828', fontWeight: '500', textDecoration: 'none' }} to='/login'>
+                  Log In
+                </NavLink>
               </Button>
             </Box>
           </Box>

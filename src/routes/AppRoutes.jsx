@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import DefaultLayout from '~/layout/DefaultLayout'
+import LogIn from '~/pages/Auth/LogIn'
 import Blogs from '~/pages/Blogs'
 import Tours from '~/pages/Tours'
 import Users from '~/pages/Users'
@@ -40,9 +41,16 @@ function AppRoute() {
             </DefaultLayout>
           }
         ></Route>
-        {/* <Route path='/login' element></Route>
+        <Route
+          path='/login'
+          element={
+            <DefaultLayout>
+              <LogIn />
+            </DefaultLayout>
+          }
+        ></Route>
 
-        <Route path='*' element></Route> */}
+        <Route path='*' element></Route>
       </Routes>
     </>
   )
