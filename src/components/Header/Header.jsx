@@ -45,13 +45,16 @@ function Header() {
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', height: '100%', gap: 4, alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', height: '100%', gap: 2, alignItems: 'center' }}>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', fontWeight: '600' }}>
                 <LocalPhoneIcon />
                 <span>Hotline: 0987742553</span>
               </Box>
               <Button variant='contained' disableElevation>
                 Contact Us
+              </Button>
+              <Button variant='contained' disableElevation>
+                Log In
               </Button>
             </Box>
           </Box>
