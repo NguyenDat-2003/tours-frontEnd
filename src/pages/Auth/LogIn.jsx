@@ -11,8 +11,8 @@ import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import GoogleIcon from '@mui/icons-material/Google'
 import FacebookIcon from '@mui/icons-material/Facebook'
-import { NavLink } from 'react-router-dom'
-import axios from 'axios'
+import { NavLink, useNavigate } from 'react-router-dom'
+import authAPI from '~/api/authAPI'
 
 function LogIn() {
   const [email, setEmail] = useState('')
@@ -21,6 +21,8 @@ function LogIn() {
 
   const [error, setError] = useState('')
   const [isLoading, setisLoading] = useState(false)
+
+  const navigate = useNavigate()
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
 
@@ -34,8 +36,12 @@ function LogIn() {
     setisLoading(true)
 
     try {
-      const res = await axios.post('http://localhost:8080/v1/users/login', { email, password })
-      console.log(res.data)
+      const res = await authAPI.logIn({
+        email,
+        password
+      })
+      localStorage.setItem('user', JSON.stringify(res))
+      navigate('/')
     } catch (error) {
       setError(error.response.data.message)
     } finally {
