@@ -13,6 +13,8 @@ import GoogleIcon from '@mui/icons-material/Google'
 import FacebookIcon from '@mui/icons-material/Facebook'
 import { NavLink, useNavigate } from 'react-router-dom'
 import authAPI from '~/api/authAPI'
+import { useContext } from 'react'
+import { AuthContext } from '~/context/AuthContext'
 
 function LogIn() {
   const [email, setEmail] = useState('')
@@ -23,6 +25,7 @@ function LogIn() {
   const [isLoading, setisLoading] = useState(false)
 
   const navigate = useNavigate()
+  const { updateUser } = useContext(AuthContext)
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
 
@@ -40,7 +43,7 @@ function LogIn() {
         email,
         password
       })
-      localStorage.setItem('user', JSON.stringify(res))
+      updateUser(res)
       navigate('/')
     } catch (error) {
       setError(error.response.data.message)
