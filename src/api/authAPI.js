@@ -5,8 +5,12 @@ const authAPI = {
     const url = '/users/login'
     return axiosClient.post(url, data)
   },
+  logOut: () => {
+    const url = '/users/logout'
+    return axiosClient.post(url)
+  },
   signUp: () => {
-    const url = '/users/login'
+    const url = '/users/signup'
     return axiosClient.post(url)
   }
 }

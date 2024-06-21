@@ -3,6 +3,7 @@ import DefaultLayout from '~/layout/DefaultLayout'
 import LogIn from '~/pages/Auth/LogIn'
 import Register from '~/pages/Auth/Register'
 import Blogs from '~/pages/Blogs'
+import Profile from '~/pages/Profile'
 import Tours from '~/pages/Tours'
 import Users from '~/pages/Users'
 
@@ -39,6 +40,14 @@ function AppRoute() {
           element={
             <DefaultLayout>
               <Blogs />
+            </DefaultLayout>
+          }
+        ></Route>
+        <Route
+          path='/profile'
+          element={
+            <DefaultLayout>
+              <Profile />
             </DefaultLayout>
           }
         ></Route>

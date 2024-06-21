@@ -5,8 +5,13 @@ import Button from '@mui/material/Button'
 import { NavLink } from 'react-router-dom'
 
 import LogoMain from '~/assets/images/logo-main.png'
+import ProfileMenu from './Menus/ProfileMenu'
+import { useContext } from 'react'
+import { AuthContext } from '~/context/AuthContext'
 
 function Header() {
+  const { currentUser } = useContext(AuthContext)
+
   return (
     <>
       <Box sx={{ height: (theme) => theme.tours.headerBarheight, width: '100%', borderBottom: '1px solid #eaecf0' }}>
@@ -53,11 +58,16 @@ function Header() {
               <Button variant='contained' disableElevation>
                 Contact Us
               </Button>
-              <Button variant='contained' disableElevation>
-                <NavLink style={{ color: '#101828', fontWeight: '500', textDecoration: 'none' }} to='/login'>
-                  Log In
-                </NavLink>
-              </Button>
+
+              {currentUser ? (
+                <ProfileMenu />
+              ) : (
+                <Button variant='contained' disableElevation>
+                  <NavLink style={{ color: '#101828', fontWeight: '500', textDecoration: 'none' }} to='/login'>
+                    Log In
+                  </NavLink>
+                </Button>
+              )}
             </Box>
           </Box>
         </Container>
