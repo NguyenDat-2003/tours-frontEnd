@@ -44,7 +44,7 @@ export default function ProfileMenu() {
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
         <Tooltip title='Account settings'>
           <IconButton onClick={handleClick} size='small' aria-controls={open ? 'account-menu' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined}>
-            <Avatar sx={{ width: 40, height: 40 }} alt='' src={currentUser.avatar || '/no-avatar.png'}></Avatar>
+            <Avatar sx={{ width: 40, height: 40 }} alt='' src={currentUser.avatar}></Avatar>
           </IconButton>
         </Tooltip>
       </Box>

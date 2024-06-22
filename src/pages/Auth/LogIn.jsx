@@ -1,13 +1,9 @@
 import { useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
 import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
-import Visibility from '@mui/icons-material/Visibility'
-import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import IconButton from '@mui/material/IconButton'
 import Divider from '@mui/material/Divider'
 import GoogleIcon from '@mui/icons-material/Google'
 import FacebookIcon from '@mui/icons-material/Facebook'
@@ -26,12 +22,6 @@ function LogIn() {
 
   const navigate = useNavigate()
   const { updateUser } = useContext(AuthContext)
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show)
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault()
-  }
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -64,13 +54,6 @@ function LogIn() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             type={showPassword ? 'text' : 'password'}
-            endAdornment={
-              <InputAdornment position='end'>
-                <IconButton aria-label='toggle password visibility' onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge='end'>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
             label='Password'
           />
         </FormControl>
