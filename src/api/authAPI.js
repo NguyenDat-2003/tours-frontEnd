@@ -9,9 +9,9 @@ const authAPI = {
     const url = '/users/logout'
     return axiosClient.post(url)
   },
-  signUp: () => {
+  signUp: (data) => {
     const url = '/users/signup'
-    return axiosClient.post(url)
+    return axiosClient.post(url, data)
   }
 }
 export default authAPI
