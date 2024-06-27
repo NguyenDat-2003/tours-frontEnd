@@ -8,6 +8,7 @@ import Register from './pages/Auth/Register'
 import Profile from './pages/Profile'
 import NotFound from '~/pages/NotFound'
 import RequireLayout from './layout/RequireLayout'
+import AdminLayout from './layout/AdminLayout'
 
 function App() {
   const router = createBrowserRouter([
@@ -17,7 +18,7 @@ function App() {
       errorElement: <NotFound />,
       children: [
         { path: '/find-tour', element: <Tours /> },
-        { path: '/enterprise', element: <Users /> },
+        { path: '/enterprise', element: <Tours /> },
         { path: '/blog', element: <Blogs /> },
         { path: '/login', element: <LogIn /> },
         { path: '/register', element: <Register /> }
@@ -27,6 +28,17 @@ function App() {
       path: '/',
       element: <RequireLayout />,
       children: [{ path: '/profile', element: <Profile /> }]
+    },
+    {
+      path: '/',
+      element: <AdminLayout />,
+      children: [
+        { path: 'admin/home', element: <Users /> },
+        { path: 'admin/tours', element: <Users /> },
+        { path: 'admin/users', element: <Users /> },
+        { path: 'admin/bookings', element: <Users /> },
+        { path: 'admin/reviews', element: <Users /> }
+      ]
     }
   ])
 

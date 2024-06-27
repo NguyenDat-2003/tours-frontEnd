@@ -1,7 +1,9 @@
 function Users() {
   return (
     <>
-      <h2>All Users</h2>
+      <div style={{ padding: '10px' }}>
+        <h2>All Users</h2>
+      </div>
     </>
   )
 }
