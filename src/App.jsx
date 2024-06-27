@@ -9,6 +9,7 @@ import Profile from './pages/Profile'
 import NotFound from '~/pages/NotFound'
 import RequireLayout from './layout/RequireLayout'
 import AdminLayout from './layout/AdminLayout'
+import AdminTours from './pages/Admin/Tours/AdminTours'
 
 function App() {
   const router = createBrowserRouter([
@@ -33,8 +34,7 @@ function App() {
       path: '/',
       element: <AdminLayout />,
       children: [
-        { path: 'admin/home', element: <Users /> },
-        { path: 'admin/tours', element: <Users /> },
+        { path: 'admin/tours', element: <AdminTours /> },
         { path: 'admin/users', element: <Users /> },
         { path: 'admin/bookings', element: <Users /> },
         { path: 'admin/reviews', element: <Users /> }

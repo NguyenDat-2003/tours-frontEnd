@@ -1,15 +1,10 @@
-import { useRouteError } from 'react-router-dom'
+import { Image, Typography } from 'antd'
 
 export default function NotFound() {
-  const error = useRouteError()
-
   return (
-    <div id='error-page' style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-      <h1 style={{ color: 'red' }}>Oops!</h1>
-      <p>Sorry, an unexpected error has occurred.</p>
-      <p>
-        <i>{error.statusText || error.message}</i>
-      </p>
+    <div style={{ position: 'relative' }}>
+      <Image preview={false} src='/vector-4k.jpg' style={{ height: '100vh', width: '100vw', objectFit: 'cover' }}></Image>
+      <Typography.Title style={{ textAlign: 'center', width: '100%', color: 'red', position: 'absolute', top: '8%' }}>404. Page not found!</Typography.Title>
     </div>
   )
 }
