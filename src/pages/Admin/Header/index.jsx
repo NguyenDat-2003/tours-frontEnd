@@ -1,5 +1,10 @@
-import { Image, Typography } from 'antd'
+import { Avatar, Typography } from 'antd'
+import { useContext } from 'react'
+import { AuthContext } from '~/context/AuthContext'
+
 function Header() {
+  const { currentUser } = useContext(AuthContext)
+
   return (
     <>
       <div
@@ -13,9 +18,9 @@ function Header() {
         }}
       >
         <div style={{ flexBasis: '40%' }}>
-          <Image width={40} src='https://yt3.ggpht.com/ytc/AMLnZu83ghQ28n1SqADR-RbI2BGYTrqqThAtJbfv9jcq=s176-c-k-c0x00ffffff-no-rj'></Image>
+          <Avatar src={currentUser.avatar || '/no-avatar.png'} style={{ height: '40px', width: '40px' }}></Avatar>
           <Typography.Text style={{ marginLeft: '6px', fontSize: '16px' }}>
-            Welcom <b>Admin</b>
+            Welcom <b>{currentUser.userName}</b>
           </Typography.Text>
         </div>
         <Typography.Title style={{ margin: '0' }}>Admin Dashboard</Typography.Title>

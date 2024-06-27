@@ -92,12 +92,14 @@ export default function ProfileMenu() {
           </MenuItem>
         </NavLink>
         {currentUser.role == 'admin' && (
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <Settings fontSize='small' />
-            </ListItemIcon>
-            Admin Page
-          </MenuItem>
+          <NavLink to='/admin/tours' style={{ textDecoration: 'none', color: 'inherit' }}>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <Settings fontSize='small' />
+              </ListItemIcon>
+              Admin Page
+            </MenuItem>
+          </NavLink>
         )}
 
         <Divider />
