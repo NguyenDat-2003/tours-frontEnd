@@ -22,11 +22,13 @@
     "antd": "^5.18.2",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
+    "firebase": "^10.12.2",
     "query-string": "^9.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.3",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.23.1"
+    "react-router-dom": "^6.23.1",
+    "sass": "^1.77.6"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
