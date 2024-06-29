@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Table, Rate, Space, Button, Input, Modal, Form, Col, Row, InputNumber, message } from 'antd'
+import { Table, Rate, Space, Button, Input, Modal, Form, Col, Row, InputNumber, message, Spin } from 'antd'
 import { EditOutlined, DeleteOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 const { Search } = Input
@@ -16,6 +16,9 @@ function AdminTours() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [name, setName] = useState('false')
   const [fileList, setFileList] = useState([])
+  const [imageUrl, setImageUrl] = useState('')
+  const [imageCoverObj, setImageCoverObj] = useState({})
+  const [isCreate, setIsCreate] = useState(false)
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -27,31 +30,48 @@ function AdminTours() {
     setIsModalOpen(false)
   }
 
-  const handleCreate = async () => {
+  const changeNameImageToFireBase = async (file, foldersName) => {
+    if (file.name) {
+      const storage = getStorage(app)
+      const storageRef = ref(storage, `${foldersName}/${Date.now()}-${file.name}`)
+      await uploadBytes(storageRef, file)
+      return await getDownloadURL(storageRef)
+    }
+  }
+
+  const handleSubmit = async (values) => {
+    setIsCreate(true)
     let imagesFile = []
     try {
+      // URL IMG COVER
+      const url = await changeNameImageToFireBase(imageCoverObj, 'imageCover')
+
+      // URL LIST IMAGES
       await Promise.all(
         fileList.map(async (file) => {
-          // const fileName = `uploads/images/${Date.now()}-${file.name}`
-          // const fileRef = storageRef.child(fileName)
           try {
-            const storage = getStorage(app)
-            const storageRef = ref(storage, `images/${file.name}-${Date.now()}`)
-            await uploadBytes(storageRef, file)
-            const url = await getDownloadURL(storageRef)
+            const url = await changeNameImageToFireBase(file, 'images')
             imagesFile.push(url)
           } catch (e) {
             throw new Error(e)
           }
+          setFileList([])
         })
       )
+      const newTour = {
+        ...values,
+        imageCover: url,
+        images: imagesFile
+      }
 
-      // Hanle Create tour
-
-      setFileList([])
-      message.success('Successfully')
+      const res = await tourAPI.createTour(newTour)
+      setDataSource([...dataSource, res])
+      message.success('Create successfully!')
     } catch (error) {
-      message.error('Error adding images.')
+      message.error(error.response.data.message)
+    } finally {
+      setIsCreate(false)
+      setIsModalOpen(false)
     }
   }
 
@@ -60,13 +80,7 @@ function AdminTours() {
       title: 'Name',
       dataIndex: 'name'
     },
-    {
-      title: 'Start Location',
-      dataIndex: 'startLocation',
-      render: (value) => {
-        return <span>{value.address}</span>
-      }
-    },
+
     {
       title: 'Difficulty',
       dataIndex: 'difficulty'
@@ -123,7 +137,7 @@ function AdminTours() {
         const res = await tourAPI.getAllTours()
         setDataSource(res)
       } catch (err) {
-        throw new Error(err.message)
+        message.error(err.response.data.message)
       } finally {
         setLoading(false)
       }
@@ -149,7 +163,6 @@ function AdminTours() {
         <Table
           columns={columns}
           dataSource={dataSource}
-          // onChange={onChange}
           pagination={{
             pageSize: 1
           }}
@@ -163,14 +176,14 @@ function AdminTours() {
         onCancel={handleCancel}
         footer={(_, { CancelBtn }) => (
           <>
-            <Button type='primary' onClick={handleCreate} htmlType='submit'>
+            <Button type='primary' htmlType='submit'>
               Create Tour
             </Button>
             <CancelBtn />
           </>
         )}
       >
-        <Form layout='vertical'>
+        <Form onFinish={handleSubmit} layout='vertical'>
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item
@@ -221,16 +234,8 @@ function AdminTours() {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                name='imageCover'
-                label='Image Cover'
-                rules={[
-                  {
-                    required: true
-                  }
-                ]}
-              >
-                <UploadOne />
+              <Form.Item name='imageCover' label='Image Cover'>
+                <UploadOne imageUrl={imageUrl} setImageUrl={setImageUrl} setImageCoverObj={setImageCoverObj} />
               </Form.Item>
             </Col>
             <Col span={16}>
@@ -282,15 +287,21 @@ function AdminTours() {
               </Form.Item>
             </Col>
             <Col span={16}>
-              <Form.Item
-                label='Images'
-                rules={[
-                  {
-                    required: true
-                  }
-                ]}
-              >
+              <Form.Item name='images' label='Images'>
                 <UploadMany fileList={fileList} setFileList={setFileList} />
+              </Form.Item>
+            </Col>
+            <Col span={4}>
+              <Form.Item>
+                {isCreate ? (
+                  <Button shape='round' type='primary' htmlType='submit' disabled>
+                    Submit
+                  </Button>
+                ) : (
+                  <Button shape='round' type='primary' htmlType='submit'>
+                    Submit
+                  </Button>
+                )}
               </Form.Item>
             </Col>
           </Row>
