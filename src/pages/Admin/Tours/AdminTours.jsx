@@ -1,38 +1,21 @@
 import { useEffect, useState } from 'react'
-import { Table, Rate, Space, Button, Input, Modal, Form, Col, Row, Upload, InputNumber, message } from 'antd'
-import { EditOutlined, DeleteOutlined, MenuUnfoldOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons'
+import { Table, Rate, Space, Button, Input, Modal, Form, Col, Row, InputNumber, message } from 'antd'
+import { EditOutlined, DeleteOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
 const { Search } = Input
 
 import tourAPI from '~/api/tourAPI'
 import './AdminTours.scss'
 import app from '~/components/firebaseUpload.js'
-
-const getBase64 = (img, callback) => {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!')
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!')
-  }
-  return isJpgOrPng && isLt2M
-}
+import UploadOne from './FileUpload/UploadOne'
+import UploadMany from './FileUpload/UploadMany'
 
 function AdminTours() {
   const [dataSource, setDataSource] = useState([])
   const [loading, setLoading] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-
   const [name, setName] = useState('false')
-
-  const [imageUrl, setImageUrl] = useState()
+  const [fileList, setFileList] = useState([])
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -44,43 +27,33 @@ function AdminTours() {
     setIsModalOpen(false)
   }
 
-  const handleChange = async (e) => {
-    const image = e.file
-    if (e.file.status === 'uploading') {
-      setLoading(true)
-      const storage = getStorage(app)
-      const storageRef = ref(storage, 'imageCover/' + image.name)
-      await uploadBytes(storageRef, image)
-      await getDownloadURL(storageRef)
-      return
+  const handleCreate = async () => {
+    let imagesFile = []
+    try {
+      await Promise.all(
+        fileList.map(async (file) => {
+          // const fileName = `uploads/images/${Date.now()}-${file.name}`
+          // const fileRef = storageRef.child(fileName)
+          try {
+            const storage = getStorage(app)
+            const storageRef = ref(storage, `images/${file.name}-${Date.now()}`)
+            await uploadBytes(storageRef, file)
+            const url = await getDownloadURL(storageRef)
+            imagesFile.push(url)
+          } catch (e) {
+            throw new Error(e)
+          }
+        })
+      )
+
+      // Hanle Create tour
+
+      setFileList([])
+      message.success('Successfully')
+    } catch (error) {
+      message.error('Error adding images.')
     }
-    // Get this url from response in real world.
-    getBase64(image.originFileObj, (url) => {
-      setLoading(false)
-      setImageUrl(url)
-    })
   }
-
-  const uploadButton = (
-    <button
-      style={{
-        border: 0,
-        background: 'none'
-      }}
-      type='button'
-    >
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div
-        style={{
-          marginTop: 8
-        }}
-      >
-        Upload
-      </div>
-    </button>
-  )
-
-  const handleCreate = () => {}
 
   const columns = [
     {
@@ -257,16 +230,7 @@ function AdminTours() {
                   }
                 ]}
               >
-                <Upload
-                  listType='picture-card'
-                  className='avatar-uploader'
-                  showUploadList={false}
-                  action='https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload'
-                  beforeUpload={beforeUpload}
-                  onChange={handleChange}
-                >
-                  {imageUrl ? <img src={imageUrl} alt='avatar' style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : uploadButton}
-                </Upload>
+                <UploadOne />
               </Form.Item>
             </Col>
             <Col span={16}>
@@ -315,6 +279,18 @@ function AdminTours() {
             <Col span={8}>
               <Form.Item name='priceDiscount' label='Price Discount'>
                 <Input placeholder='Price Discount' />
+              </Form.Item>
+            </Col>
+            <Col span={16}>
+              <Form.Item
+                label='Images'
+                rules={[
+                  {
+                    required: true
+                  }
+                ]}
+              >
+                <UploadMany fileList={fileList} setFileList={setFileList} />
               </Form.Item>
             </Col>
           </Row>
