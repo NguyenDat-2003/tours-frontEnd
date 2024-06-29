@@ -2,12 +2,8 @@ import { Upload, message } from 'antd'
 import { useState } from 'react'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
-import app from '~/components/firebaseUpload'
-
-function UploadOne() {
+function UploadOne({ imageUrl, setImageUrl, setImageCoverObj }) {
   const [loading, setLoading] = useState(false)
-  const [imageUrl, setImageUrl] = useState()
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader()
@@ -31,10 +27,6 @@ function UploadOne() {
     const image = e.file
     if (e.file.status === 'uploading') {
       setLoading(true)
-      const storage = getStorage(app)
-      const storageRef = ref(storage, `imageCover/${image.name}-${Date.now()}`)
-      await uploadBytes(storageRef, image)
-      await getDownloadURL(storageRef)
       return
     }
     // Get this url from response in real world.
@@ -42,6 +34,7 @@ function UploadOne() {
       setLoading(false)
       setImageUrl(url)
     })
+    setImageCoverObj(image)
   }
 
   const uploadButton = (
