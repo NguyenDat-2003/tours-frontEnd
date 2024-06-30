@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react'
-import { Table, Rate, Space, Button, Input, Modal, Form, Col, Row, InputNumber, message, Spin } from 'antd'
-import { EditOutlined, DeleteOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
+import { Table, Rate, Space, Button, Input, Modal, message } from 'antd'
+import { EditOutlined, DeleteOutlined, MenuUnfoldOutlined, ExclamationCircleFilled } from '@ant-design/icons'
 const { Search } = Input
+const { confirm } = Modal
 
 import tourAPI from '~/api/tourAPI'
 import './AdminTours.scss'
-import app from '~/components/firebaseUpload.js'
-import UploadOne from './FileUpload/UploadOne'
-import UploadMany from './FileUpload/UploadMany'
+
+import changeNameImageToFireBase from '~/utils/changeNameImageToFireBase'
+import ModalAddNewTour from './ModalAddNewTour/ModalAddNewTour'
 
 function AdminTours() {
   const [dataSource, setDataSource] = useState([])
+  const [fileList, setFileList] = useState([])
+  const [imageCoverObj, setImageCoverObj] = useState({})
+
   const [loading, setLoading] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [name, setName] = useState('false')
-  const [fileList, setFileList] = useState([])
-  const [imageUrl, setImageUrl] = useState('')
-  const [imageCoverObj, setImageCoverObj] = useState({})
   const [isCreate, setIsCreate] = useState(false)
+
+  const [name, setName] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -30,13 +32,26 @@ function AdminTours() {
     setIsModalOpen(false)
   }
 
-  const changeNameImageToFireBase = async (file, foldersName) => {
-    if (file.name) {
-      const storage = getStorage(app)
-      const storageRef = ref(storage, `${foldersName}/${Date.now()}-${file.name}`)
-      await uploadBytes(storageRef, file)
-      return await getDownloadURL(storageRef)
-    }
+  const showDeleteConfirm = (id) => {
+    confirm({
+      title: 'Are you sure delete this tour?',
+      icon: <ExclamationCircleFilled />,
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        ;(async () => {
+          try {
+            const res = await tourAPI.deleteTour(id)
+            setDataSource(dataSource.filter((data) => data._id !== id))
+            message.success(res.delete)
+          } catch (error) {
+            message.error(error.response.data.message)
+          }
+        })()
+      },
+      onCancel() {}
+    })
   }
 
   const handleSubmit = async (values) => {
@@ -117,13 +132,12 @@ function AdminTours() {
 
     {
       title: 'Actions',
-      dataIndex: '',
-      key: 'x',
-      render: () => {
+      dataIndex: '_id',
+      render: (id) => {
         return (
           <Space>
             <EditOutlined style={{ color: '#fadb14', fontSize: '16px', padding: '4px', cursor: 'pointer' }} />
-            <DeleteOutlined style={{ color: 'red', fontSize: '16px', padding: '4px', cursor: 'pointer' }} />
+            <DeleteOutlined onClick={() => showDeleteConfirm(id)} style={{ color: 'red', fontSize: '16px', padding: '4px', cursor: 'pointer' }} />
           </Space>
         )
       }
@@ -164,149 +178,25 @@ function AdminTours() {
           columns={columns}
           dataSource={dataSource}
           pagination={{
-            pageSize: 1
+            pageSize: 2
           }}
           loading={loading}
         />
       </div>
-      <Modal
-        title='Add new Tour'
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={(_, { CancelBtn }) => (
-          <>
-            <Button type='primary' htmlType='submit'>
-              Create Tour
-            </Button>
-            <CancelBtn />
-          </>
-        )}
-      >
-        <Form onFinish={handleSubmit} layout='vertical'>
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item
-                name='name'
-                label='Name'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please enter tour name'
-                  },
-                  { whitespace: true, message: 'Name cannot be empty' }
-                ]}
-                hasFeedback
-              >
-                <Input placeholder='Name' />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name='duration'
-                label='Duration'
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please enter duration'
-                  }
-                ]}
-                hasFeedback
-              >
-                <InputNumber style={{ width: '100%' }} min={0} placeholder='Duration' />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name='maxGroupSize'
-                label='Max Group'
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please enter group size'
-                  }
-                ]}
-                hasFeedback
-              >
-                <InputNumber style={{ width: '100%' }} min={0} placeholder='Max Group' />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item name='imageCover' label='Image Cover'>
-                <UploadOne imageUrl={imageUrl} setImageUrl={setImageUrl} setImageCoverObj={setImageCoverObj} />
-              </Form.Item>
-            </Col>
-            <Col span={16}>
-              <Form.Item
-                name='summary'
-                label='Summary'
-                rules={[
-                  {
-                    required: true
-                  }
-                ]}
-              >
-                <Input.TextArea rows={4} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name='difficulty'
-                label='Difficulty'
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please enter difficulty'
-                  }
-                ]}
-                hasFeedback
-              >
-                <Input placeholder='Difficulty' />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name='price'
-                label='Price'
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please enter price'
-                  }
-                ]}
-                hasFeedback
-              >
-                <InputNumber style={{ width: '100%' }} min={0} placeholder='Price' />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item name='priceDiscount' label='Price Discount'>
-                <Input placeholder='Price Discount' />
-              </Form.Item>
-            </Col>
-            <Col span={16}>
-              <Form.Item name='images' label='Images'>
-                <UploadMany fileList={fileList} setFileList={setFileList} />
-              </Form.Item>
-            </Col>
-            <Col span={4}>
-              <Form.Item>
-                {isCreate ? (
-                  <Button shape='round' type='primary' htmlType='submit' disabled>
-                    Submit
-                  </Button>
-                ) : (
-                  <Button shape='round' type='primary' htmlType='submit'>
-                    Submit
-                  </Button>
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
+      <ModalAddNewTour
+        isModalOpen={isModalOpen}
+        name={name}
+        setName={setName}
+        imageUrl={imageUrl}
+        setImageUrl={setImageUrl}
+        setImageCoverObj={setImageCoverObj}
+        isCreate={isCreate}
+        handleOk={handleOk}
+        handleCancel={handleCancel}
+        handleSubmit={handleSubmit}
+        fileList={fileList}
+        setFileList={setFileList}
+      />
     </>
   )
 }
